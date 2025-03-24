@@ -12,10 +12,11 @@ def cleaner(df: pd.DataFrame):
     df_cleaned['minutes'] = df_cleaned['minutes'].apply(convert_minutes_to_float)
     df_cleaned = df_cleaned[df_cleaned['minutes'] >= 10]
 
-    # drop useless (mehrdad) columns
+    # drop useless (unused) columns
     cols_to_drop = ['comment', 'jerseyNum', 'matchup', 'season_year', 'game_date', 'gameId', 'teamId', 'teamCity', 'teamName', 'teamTricode', 'personName', 'position', 'turnovers', 'foulsPersonal', 'plusMinusPoints']
     
     # TODO: before deleting matchup, split and add column for against team (againstTeamSlug)
+    # TODO: re-add game date
     df_cleaned = df_cleaned.drop(cols_to_drop, axis=1)
     return df_cleaned
 
