@@ -1,7 +1,8 @@
 import pandas as pd
 
-def penis():
-    bigpenis = pd.read_csv('./NBA-Data-2010-2024/regular_season_box_scores_2010_2024_part_1.csv')
-    print(bigpenis.columns)
+def summary():
+    bigsummary = pd.read_csv('./cleaned/final.csv')
+    bigsummary['game_date'] = pd.to_datetime(bigsummary['game_date'])
+    print(bigsummary['game_date'][1])
 
-penis()
+summary()
