@@ -1,3 +1,7 @@
 pandas
 sklearn
 numpy
+os
+joblib
+torch
+xgboost
