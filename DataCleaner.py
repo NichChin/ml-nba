@@ -24,15 +24,21 @@ def cleaner(df: pd.DataFrame):
     df_cleaned['againstTeamSlug'] = df_cleaned['matchup'].apply(add_against_slug)
 
     # drop useless (unused) columns
-    cols_to_drop = ['comment', 'matchup', 'season_year', 'jerseyNum', 'gameId', 'teamId', 'teamCity', 'teamName', 'teamTricode', 'personName', 'position', 'turnovers', 'foulsPersonal', 'plusMinusPoints']
+    cols_to_drop = ['comment', 'matchup', 'jerseyNum', 'gameId', 'teamId', 'teamCity', 'teamName', 'teamTricode', 'position', 'turnovers', 'foulsPersonal', 'plusMinusPoints']
 
     df_cleaned = df_cleaned.drop(cols_to_drop, axis=1)
     return df_cleaned
 
-for i in range(1, 4):
-    if i == 1:
-        biggest_cleaned = cleaner(pd.read_csv('./NBA-Data-2010-2024/regular_season_box_scores_2010_2024_part_1.csv'))
-    else:
-        biggest_cleaned = pd.concat([biggest_cleaned, cleaner(pd.read_csv(f"./NBA-Data-2010-2024/regular_season_box_scores_2010_2024_part_{i}.csv"))], ignore_index=True)
+# for i in range(1, 4):
+#     if i == 1:
+#         biggest_cleaned = cleaner(pd.read_csv('./NBA-Data-2010-2024/regular_season_box_scores_2010_2024_part_1.csv'))
+#     else:
+#         biggest_cleaned = pd.concat([biggest_cleaned, cleaner(pd.read_csv(f"./NBA-Data-2010-2024/regular_season_box_scores_2010_2024_part_{i}.csv"))], ignore_index=True)
 
-biggest_cleaned.to_csv('./cleaned/final.csv', index=False)
+# biggest_cleaned.to_csv('./cleaned/final.csv', index=False)
+
+def for_rc(df: pd.DataFrame):
+    df = df[['season_year', 'game_date', 'teamSlug', 'personName']]
+    df.to_csv('./cleaned/for_rc.csv', index=False)
+
+for_rc(pd.read_csv('./cleaned/final.csv'))
