@@ -37,8 +37,8 @@ def cleaner(df: pd.DataFrame):
 
 # biggest_cleaned.to_csv('./cleaned/final.csv', index=False)
 
-def for_rc(df: pd.DataFrame):
-    df = df[['season_year', 'game_date', 'teamSlug', 'personName']]
-    df.to_csv('./cleaned/for_rc.csv', index=False)
-
-for_rc(pd.read_csv('./cleaned/final.csv'))
+# def for_rc(df: pd.DataFrame):
+#     df = df[['season_year', 'game_date', 'teamSlug', 'personId', 'againstTeamSlug']]
+#     df.to_csv('./cleaned/for_rc.csv', index=False)
+#
+# for_rc(pd.read_csv('./cleaned/final.csv'))
