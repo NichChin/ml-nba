@@ -4,13 +4,18 @@ import numpy as np
 from constants import *
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import OneHotEncoder
+import scipy.stats as stats
 
 cleaned = pd.read_csv('./cleaned/trimmed_final_with_pgs.csv')
+playerNames = pd.read_csv('./cleaned/personNames.csv')
 
 def predict_single_player(player_df: pd.DataFrame, model: RandomForestRegressor) -> float:
     prediction = model.predict(player_df)
 
-    print(prediction)
+    playerId = player_df['personId'].iloc[0]
+    playerName = playerNames[playerNames['personId'] == playerId]['personName'].values[0]
+
+    print(f'{playerName} will score {prediction[0]} points')
     return prediction[0]
 
 model = joblib.load('./models/random_forest_model_new.pkl')
@@ -22,10 +27,10 @@ test_data = {
         'playerGameScore': [25],  
         'teamGameScore': [7.8],  
         'againstTeamGameScore': [6.5],  
-        'days_since_last_game': [5]  
+        'days_since_last_game': [5]
     }
 
-def generate_test_data(against_team_slug, team_slug, encoded_col_names_file='./cleaned/encoded_col_names.csv'):
+def generate_test_data(against_team_slug, team_slug, encoded_col_names_file='./cleaned/encoded_col_names.csv', test_data=test_data):
     column_names = pd.read_csv(encoded_col_names_file, header=None).iloc[0].tolist()
 
     encoder = OneHotEncoder(sparse_output=False, handle_unknown='ignore')
@@ -54,4 +59,10 @@ def generate_test_data(against_team_slug, team_slug, encoded_col_names_file='./c
 
     return test_df
 
-predict_single_player(player_df=generate_test_data('wizards', 'lakers'), model=model)
+def compute_probability(teamSlug, againstTeamSlug, test_data=test_data, under=True, threshold=10):
+    predicted_points = predict_single_player(player_df=generate_test_data(teamSlug, againstTeamSlug, test_data=test_data), model=model)
+    prob_under = stats.norm.cdf(threshold, loc=predicted_points, scale=STD_DEV)
+
+    return prob_under if under else 1 - prob_under
+
+print(compute_probability(teamSlug='lakers', againstTeamSlug='hornets', test_data=test_data, under=False, threshold=20))
