@@ -61,8 +61,9 @@ def generate_test_data(against_team_slug, team_slug, encoded_col_names_file='./c
 
 def compute_probability(teamSlug, againstTeamSlug, test_data=test_data, under=True, threshold=10):
     predicted_points = predict_single_player(player_df=generate_test_data(teamSlug, againstTeamSlug, test_data=test_data), model=model)
-    prob_under = stats.norm.cdf(threshold, loc=predicted_points, scale=STD_DEV)
+    prob_under = stats.norm.cdf(threshold, loc=predicted_points, scale=STD_DEV_RANDOM_FOREST)
 
     return prob_under if under else 1 - prob_under
 
-print(compute_probability(teamSlug='lakers', againstTeamSlug='hornets', test_data=test_data, under=False, threshold=20))
+if __name__ == '__main__':
+    print(compute_probability(teamSlug='lakers', againstTeamSlug='hornets', test_data=test_data, under=False, threshold=20))

@@ -6,4 +6,5 @@ NUMERIC_FEATURES = ['minutes', 'fieldGoalsMade', 'fieldGoalsAttempted', 'fieldGo
 CATEGORICAL_FEATURES = ['againstTeamSlug']
 LEBRON_JAMES = 2544
 # as estimated from Measurements.py
-STD_DEV = 5.335739439980762
+STD_DEV_RANDOM_FOREST = 5.335739439980762
+STD_DEV_XGBOOST = 5.1933

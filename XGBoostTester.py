@@ -1,49 +1,40 @@
 import xgboost as xgb
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+from RandomForestTester import generate_test_data
+from constants import *
+import scipy.stats as stats
 
 model = xgb.Booster()
-model.load_model('xgboost_model.json')
+model.load_model('./cleaned/xgboost_model_new.json')
+playerNames = pd.read_csv('./cleaned/personNames.csv')
 
-single_player_data = {
-    'minutes': 25, 
-    'fieldGoalsMade': 5, 
-    'fieldGoalsAttempted': 10, 
-    'fieldGoalsPercentage': 0.5,
-    'threePointersMade': 2, 
-    'threePointersAttempted': 4, 
-    'threePointersPercentage': 0.5, 
-    'freeThrowsMade': 1, 
-    'freeThrowsAttempted': 2, 
-    'freeThrowsPercentage': 0.5, 
-    'reboundsOffensive': 1, 
-    'reboundsDefensive': 3, 
-    'reboundsTotal': 4, 
-    'assists': 2, 
-    'steals': 1, 
-    'blocks': 0, 
-    'againstTeamSlug': 'magic', 
-    'days_since_recent_game': 15
-}
+test_data = {
+        'percent_completed': [0.9],
+        'personId': [LEBRON_JAMES],
+        'minutes': [40],  
+        'playerGameScore': [20],  
+        'teamGameScore': [7.8],  
+        'againstTeamGameScore': [8.5],  
+        'days_since_last_game': [1]
+    }
 
-single_player_df = pd.DataFrame([single_player_data])
+def predict_single_player(player_df: pd.DataFrame, model=model):
+    dtest = xgb.DMatrix(player_df)
+    prediction = model.predict(dtest)
 
-encoder = LabelEncoder()
-single_player_df['againstTeamSlug'] = encoder.fit_transform(single_player_df['againstTeamSlug'])
+    playerId = player_df['personId'].iloc[0]
+    playerName = playerNames[playerNames['personId'] == playerId]['personName'].values[0]
 
-features = [
-    'minutes', 'fieldGoalsMade', 'fieldGoalsAttempted', 'fieldGoalsPercentage',
-    'threePointersMade', 'threePointersAttempted', 'threePointersPercentage',
-    'freeThrowsMade', 'freeThrowsAttempted', 'freeThrowsPercentage',
-    'reboundsOffensive', 'reboundsDefensive', 'reboundsTotal', 'assists', 
-    'steals', 'blocks', 'againstTeamSlug', 'days_since_recent_game'
-]
+    print(f'{playerName} will score {prediction[0]} points')
+    return prediction[0]
 
-X_single_player = single_player_df[features]
+def compute_probability(predicted_points, threshold, under=False):
+    prob_under = stats.norm.cdf(threshold, loc=predicted_points, scale=STD_DEV_XGBOOST)
 
-dtest = xgb.DMatrix(X_single_player)
+    return prob_under if under else 1 - prob_under
 
-pred_proba = model.predict(dtest)
 
-print(f'Predicted probability of scoring above 10 points: {pred_proba[0]:.4f}')
+pts = predict_single_player(generate_test_data(team_slug='lakers', against_team_slug='rockets', test_data=test_data))
+print(compute_probability(pts, threshold=20, under=False))

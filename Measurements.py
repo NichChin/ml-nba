@@ -63,7 +63,9 @@ def compute_std_dev(df: pd.DataFrame, model):
 
     # predict and evaluate the model
     y_pred = model.predict(X_test)
+    r2 = r2_score(y_test, y_pred)
 
+    print(f'R2: {r2:.4f}')
     residuals = y_test - y_pred
 
     # compute the standard deviation of the residuals
