@@ -5,3 +5,4 @@ os
 joblib
 torch
 xgboost
+nba_api
