@@ -17,13 +17,20 @@ In terms of basketball assumptions, many simplifications were made. Some example
 
 ## Dataset Description
 
-Data from regular season games from 2010-2024 was used to train the model on matchup and player rosters. It includes the following:
+Data from regular season games from 2010-2024 was used to train the model on matchup and player rosters. The regular season data includes the following:
 
 ```
 {season_year,game_date,teamSlug,personId,personName,minutes,fieldGoalsMade,fieldGoalsAttempted,fieldGoalsPercentage,threePointersMade,threePointersAttempted,threePointersPercentage,freeThrowsMade,freeThrowsAttempted,freeThrowsPercentage,reboundsOffensive,reboundsDefensive,reboundsTotal,assists,steals,blocks,points,againstTeamSlug,playerGameScore,teamGameScore,againstTeamGameScore}
 ```
+The dataset was then trimmed to only include players that played >=10 minutes.
 
-More features were needed beyond what was provided in the `NBA-Data-2010-2024` dataset (provided by the subrepo), so `playerGameScore`, `teamGameScore`, `againstTeamGameScore` were calculated from data collected by the nba-api (details in `PlayerGameScore.py`).
+However, more features were needed beyond what was provided in the `NBA-Data-2010-2024` dataset (provided by the subrepo), so `playerGameScore`, `teamGameScore`, `againstTeamGameScore` were calculated from data collected by the nba-api (details in `PlayerGameScore.py`).
+
+Accordingly, the following features were selected to train the model:
+
+```
+{game_date,percent_completed,teamSlug,personId,againstTeamSlug,minutes,playerGameScore,teamGameScore,againstTeamGameScore,points}
+```
 
 ## Model Performance
 
@@ -45,7 +52,7 @@ As some player's predicted points are 0 (or close to 0), the MAPE is arbitrarily
 `./cleaned/trimmed_final_with_pgs.csv` -> data used to train/test the model  
 `./models/` -> contains the trained models. The suffix _initial indicates this was the initial model trained where there was excessive data leakage (resulting in an R^2 score of 1). Conversely, _new denotes the newer model, without the data leakage.  
 
-Note: to test the random forest model, `random_forest_model_new.7z` will have to be unzipped. If errors occur with pulling, please contact Nicholas.  
+Note: to test the random forest model, `random_forest_model_new.7z` will have to be unzipped. If errors occur when pulling, please contact the repo owner.  
 
 ## Group Members
 
